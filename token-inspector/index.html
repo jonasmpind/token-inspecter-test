@@ -146,18 +146,24 @@ function render() {
 
   const platform = platformSelect.value;
   const selectedTiers = Array.from(tierSelect.selectedOptions).map(o => o.value);
-  const search = searchInput.value.toLowerCase();
+  const search = searchInput.value.trim().toLowerCase();
 
   if (!platform) return;
 
   const tiers = allTokens[platform];
 
+  console.log("Platform:", platform);
+  console.log("Available tier keys:", Object.keys(tiers));
+  console.log("Selected tiers:", selectedTiers);
+
   for (const tierFile in tiers) {
     const tier = tierFile.replace("-web", "");
 
-    if (selectedTiers.length && !selectedTiers.includes(tier)) continue;
-
     const tokens = tiers[tierFile];
+
+    console.log("TierFile:", tierFile, "| Normalized:", tier, "| Token count:", Object.keys(tokens).length);
+
+    if (selectedTiers.length && !selectedTiers.includes(tier)) continue;
 
     for (const name in tokens) {
       if (search && !name.toLowerCase().includes(search)) continue;
