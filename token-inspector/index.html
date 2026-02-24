@@ -27,6 +27,35 @@ select, input {
   padding: 8px;
   font-size: 14px;
 }
+.token-stats {
+  width: 100%;
+  margin-bottom: 16px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+}
+
+.token-count {
+  position: relative;
+  font-weight: 500;
+  cursor: default;
+}
+
+.token-count:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  top: 24px;
+  left: 0;
+  white-space: pre;
+  background: #111827;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  line-height: 1.4;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  z-index: 100;
+}
 
 .grid {
   display: grid;
@@ -74,6 +103,9 @@ select, input {
 
   <input type="text" id="searchInput" placeholder="Search tokens..." />
 </div>
+<div class="token-stats">
+  <span id="tokenCount" class="token-count"></span>
+</div>
 
 <div class="grid" id="tokenGrid"></div>
 
@@ -82,6 +114,7 @@ const grid = document.getElementById("tokenGrid");
 const platformSelect = document.getElementById("platformSelect");
 const tierSelect = document.getElementById("tierSelect");
 const searchInput = document.getElementById("searchInput");
+const tokenCountEl = document.getElementById("tokenCount");
 
 let allTokens = {};
 
@@ -152,21 +185,23 @@ function render() {
 
   const tiers = allTokens[platform];
 
-  console.log("Platform:", platform);
-  console.log("Available tier keys:", Object.keys(tiers));
-  console.log("Selected tiers:", selectedTiers);
+  let totalCount = 0;
+  let tierCounts = {};
 
   for (const tierFile in tiers) {
     const tier = tierFile.replace("-web", "");
 
+    if (selectedTiers.length && !selectedTiers.includes(tier)) continue;
+
     const tokens = tiers[tierFile];
 
-    console.log("TierFile:", tierFile, "| Normalized:", tier, "| Token count:", Object.keys(tokens).length);
-
-    if (selectedTiers.length && !selectedTiers.includes(tier)) continue;
+    if (!tierCounts[tier]) tierCounts[tier] = 0;
 
     for (const name in tokens) {
       if (search && !name.toLowerCase().includes(search)) continue;
+
+      tierCounts[tier]++;
+      totalCount++;
 
       const token = tokens[name];
 
@@ -174,23 +209,33 @@ function render() {
       card.className = "card";
 
       const valueDisplay =
-  typeof token.$value === "object"
-    ? JSON.stringify(token.$value, null, 2)
-    : token.$value;
+        typeof token.$value === "object"
+          ? JSON.stringify(token.$value, null, 2)
+          : token.$value;
 
-card.innerHTML = `
-  <div class="token-name">${name}</div>
-  <div class="token-value">${valueDisplay}</div>
-  ${
-    typeof token.$value === "string" && token.$value.startsWith("{")
-      ? `<div class="alias">Alias → ${token.$value}</div>`
-      : ""
-  }
-`;
+      card.innerHTML = `
+        <div class="token-name">${name}</div>
+        <div class="token-value">${valueDisplay}</div>
+        ${
+          typeof token.$value === "string" && token.$value.startsWith("{")
+            ? `<div class="alias">Alias → ${token.$value}</div>`
+            : ""
+        }
+      `;
 
       grid.appendChild(card);
     }
   }
+
+  // Update total text
+  tokenCountEl.textContent = `Tokens (${totalCount})`;
+
+  // Build tooltip
+  const tooltipLines = Object.entries(tierCounts)
+    .map(([tier, count]) => `${tier} (${count})`)
+    .join("\n");
+
+  tokenCountEl.setAttribute("data-tooltip", tooltipLines);
 }
 
 platformSelect.addEventListener("change", render);
