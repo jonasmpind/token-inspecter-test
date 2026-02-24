@@ -86,7 +86,7 @@ const searchInput = document.getElementById("searchInput");
 let allTokens = {};
 
 async function init() {
-  const metadata = await fetch("tokens/$metadata.json").then(r => r.json());
+  const metadata = await fetch("../tokens/$metadata.json").then(r => r.json());
 
   const platforms = new Set();
   const tierMap = {};
@@ -115,7 +115,7 @@ async function init() {
     const entries = metadata.tokenSetOrder.filter(e => e.startsWith(platform));
 
     for (const entry of entries) {
-      const res = await fetch(`tokens/${entry}.json`);
+      const res = await fetch(`../tokens/${entry}.json`);
       const json = await res.json();
       allTokens[platform][entry.split("/")[1]] = flattenTokens(json);
     }
