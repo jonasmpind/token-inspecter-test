@@ -1,16 +1,24 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;500;600;700&display=swap");
+
 /* ==============================
    Base 
 ================================= */
 
 :root {
-  --bg-page: #f9fafb;
-  --bg-surface: #ffffff;
-  --border-subtle: #e5e7eb;
-  --border-hover: #d1d5db;
+  --bg-page: hsl(210, 20%, 98%);
+  --bg-surface-1: hsl(0, 0%, 100%);
+  --border-subtle: hsl(220, 13%, 90%);
+  --border-medium: hsl(216, 12%, 82%);
+  --border-strong: hsl(218, 11%, 65%);
+  --border-hover: hsl(216, 12%, 70%);
+  --border-active: hsl(221, 39%, 20%);
 
-  --text-default: #111827;
-  --text-muted: #6b7280;
-  --text-placeholder: #9ca3af;
+  --text-default: hsl(221, 0%, 10%);
+  --text-subtle: hsl(221, 0%, 35%);
+  --text-muted: hsl(220, 0%, 45%);
+  --text-placeholder: hsl(220, 0%, 45%);
 
   --radius-xs: 4px;
   --radius-sm: 8px;
@@ -21,6 +29,10 @@
   --space-3: 16px;
   --space-4: 24px;
 
+  --fontFamily-mono: "Source Code Pro", monospace;
+  --fontFamily-sans: "Inter", sans-serif;
+  --fontFamily-serif: "Times New Roman", serif;
+
   --transition-fast: 0.15s ease;
 }
 
@@ -29,7 +41,7 @@
 }
 
 body {
-  font-family: Inter, sans-serif;
+  font-family: var(--fontFamily-sans);
   background: var(--bg-page);
   padding: var(--space-4);
   margin: 0;
@@ -40,11 +52,31 @@ h1 {
   margin-bottom: var(--space-4);
 }
 
+label,
+.label {
+  color: var(--text-subtle);
+  font-size: 12px;
+  margin-bottom: var(--space-1);
+  display: block;
+  /* text-transform: uppercase; */
+  letter-spacing: 0.03em;
+  font-family: var(--fontFamily-mono);
+}
 
 /* ==============================
    Layout
 ================================= */
 
+.col {
+  display: flex;
+  flex-direction: column;
+  /* gap: var(--space-1); */
+}
+.row {
+  display: flex;
+  /* gap: var(--space-3); */
+  align-items: center;
+}
 .controls {
   display: flex;
   flex-wrap: wrap;
@@ -55,7 +87,7 @@ h1 {
 
 .token-stats {
   width: 100%;
-  margin-bottom: var(--space-3);
+  margin-bottom: var(--space-2);
   font-size: 14px;
   display: flex;
   align-items: center;
@@ -67,23 +99,33 @@ h1 {
   gap: var(--space-3);
 }
 
-
 /* ==============================
    Controls
 ================================= */
 
+.controls {
+  width: 100%;
+  /* padding: var(--space-3); */
+  padding-bottom: var(--space-4);
+  background: var(--bg-page);
+  border-bottom: 1px solid var(--border-subtle);
+  /* border-radius: var(--radius-sm); */
+}
+
 .controls select,
 .controls input {
   appearance: none;
-  background: var(--bg-surface);
-  border: 1px solid var(--border-subtle);
+  background: var(--bg-surface-1);
+  border: 1px solid var(--border-medium);
   border-radius: var(--radius-sm);
   padding: var(--space-1) var(--space-2);
+  min-width: 120px;
   font-size: 14px;
   font-family: inherit;
   color: var(--text-default);
-  transition: border-color var(--transition-fast),
-              box-shadow var(--transition-fast);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
 
 .controls input::placeholder {
@@ -103,40 +145,46 @@ h1 {
 .controls select:focus,
 .controls input:focus {
   outline: none;
-  border-color: var(--text-default);
+  border-color: var(--border-active);
   box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.08);
 }
-
 
 /* ==============================
    Token Cards
 ================================= */
 
 .card {
-  background: var(--bg-surface);
+  background: var(--bg-surface-1);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-sm);
   padding: var(--space-3);
   transition: border-color var(--transition-fast);
 }
 
-.token-name {
-  font-family: monospace;
-  font-size: 12px;
+.token-name,
+.token-value,
+.token-alias {
+  font-family: var(--fontFamily-mono);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-default);
   margin-bottom: var(--space-1);
   word-break: break-all;
 }
 
-.token-value {
-  font-weight: 600;
-  margin-bottom: 4px;
+.token-name {
+  font-family: var(--fontFamily-sans);
+  color: var(--text-default);
+  font-weight: 500;
 }
 
-.alias {
-  font-size: 12px;
+.token-value {
   color: var(--text-muted);
 }
 
+.token-alias {
+  color: var(--text-subtle);
+}
 
 /* ==============================
    Token Counter Tooltip
@@ -144,7 +192,6 @@ h1 {
 
 .token-count {
   position: relative;
-  font-weight: 500;
   cursor: default;
 }
 
